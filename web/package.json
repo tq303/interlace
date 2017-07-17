@@ -1,0 +1,26 @@
+{
+  "name": "interlace",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "local": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --content-base . --port 8080",
+    "build": "./node_modules/webpack/bin/webpack.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "three": "^0.86.0",
+    "three-orbit-controls": "^82.1.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "flow-babel-webpack-plugin": "^1.1.0",
+    "webpack": "^3.3.0",
+    "webpack-dev-server": "^2.5.0"
+  }
+}
