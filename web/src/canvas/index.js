@@ -27,7 +27,7 @@ class Canvas {
 
     this.camera.lookAt( new Vector3(0,0,0) );
 
-    this.scene.add(new AmbientLight( 0xffffff ));
+    // this.scene.add(new AmbientLight( 0xffffff ));
 
     // initialize renderer
     this.renderer = new WebGLRenderer();

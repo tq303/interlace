@@ -4,9 +4,15 @@ import {
   Object3D,
   MeshLambertMaterial,
   Mesh,
-  ExtrudeGeometry,
+  ExtrudeBufferGeometry,
   Shape,
-  CylinderGeometry,
+  CylinderBufferGeometry,
+  SpotLight,
+  Vector3,
+  Geometry,
+  PointsMaterial,
+  Points,
+  PointLight
 } from 'three';
 
 import { LED_COUNT } from 'constants/ledDefinitions';
@@ -41,26 +47,55 @@ export default class Node extends Object3D {
 
     // draw fins
     for (let i = 0; i < 6; i++) {
-      this.fins.push(this.addFin(i));      
+      this.fins[i] = this.addFin(i);
       this.add( this.fins[i] );
     }
 
     // draw LED strips
-    // for (let i = 0; i < 6; i++) {
-    //   this.strips.push(this.addStrip(i));      
-    //   this.add( this.strips[i] );
-    // }
+    for (let i = 0; i < 6; i++) {
+      this.strips[i] = this.addStrip(i);
+      this.add( this.strips[i] );
+    }
 
   }
 
   addCylinder() {
-    const cylinderGeo = new CylinderGeometry( this.cylinderDiameter, this.cylinderDiameter, this.height, 12 );
+    const cylinderGeo = new CylinderBufferGeometry( this.cylinderDiameter, this.cylinderDiameter, this.height, 12 );
     cylinderGeo.translate(0,-this.height/2,0);
-    return new Mesh(cylinderGeo, new MeshLambertMaterial({ color: 0xffff00 }));
+    return new Mesh(cylinderGeo, new MeshLambertMaterial({ color: 0x656565 }));
   }
 
   addFin(position: number) {
-    return new Mesh(this.finGeometry(position), new MeshLambertMaterial({ color: 0x84F9FF }));
+    return new Mesh(this.finGeometry(position), new MeshLambertMaterial({ color: 0x494949 }));
+  }
+
+  addStrip(position: number) {
+    const group = new Object3D();
+    const angle = ((2 * Math.PI) / 6 * position) + ((2 * Math.PI) / (6 * 2));
+
+    for (let i = 0; i < 15; i++) {
+
+      // degug tracer
+      const dotGeometry = new Geometry();
+      dotGeometry.vertices.push(new Vector3(this.cylinderDiameter, -(1 + (this.height / 15) * i), 0));
+
+      const dotMaterial = new PointsMaterial( { size: 1, sizeAttenuation: false } );
+      const dot = new Points( dotGeometry, dotMaterial );
+      dot.position.set(0,0,0);
+      dot.rotateY(angle);
+
+      group.add(dot);      
+
+      // light
+      const light = new PointLight( 0xff0000, 1, 10 );
+      light.position.set(dot.position.x, dot.position.y, dot.position.z);
+      light.rotateY(angle);
+
+      group.add(light);
+
+    }
+
+    return group;
   }
 
   finGeometry(position: number) {
@@ -73,7 +108,7 @@ export default class Node extends Object3D {
     shape.lineTo(this.cylinderDiameter,-this.height);
     shape.lineTo(this.cylinderDiameter + (this.height / 3),-(this.height / 3) * 2);
 
-    const geometry = new ExtrudeGeometry( shape, {amount: .3, bevelEnabled: false} );
+    const geometry = new ExtrudeBufferGeometry( shape, {amount: .3, bevelEnabled: false} );
 
     geometry.rotateY(angle);
 
