@@ -49,7 +49,7 @@ export default class Node extends Object3D {
   draw() {
 
     // draw cylinder
-    this.add( this.addCylinder() );
+    // this.add( this.addCylinder() );
 
     // draw fins
     // for (let i = 0; i < 6; i++) {
@@ -83,7 +83,8 @@ export default class Node extends Object3D {
 
       const LED = this.createLED();
 
-      LED.position.set(this.cylinderDiameter + .02, -(1 + (this.height / 15) * i), 0);
+      LED.position.set(Math.cos(angle) * i * .8, Math.sin(angle) * i * .8, i * .8);
+      // LED.rotateY(30 * (180 / Math.PI));
 
       group.add(LED);      
 
@@ -94,8 +95,6 @@ export default class Node extends Object3D {
       // group.add(light);
 
     }
-
-    group.rotateY(angle);
 
     return group;
   }
