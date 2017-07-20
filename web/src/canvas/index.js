@@ -23,11 +23,11 @@ class Canvas {
     // scene and camera
     this.scene    = new Scene();
     this.camera   = new PerspectiveCamera( 75, width / height, 1, 10000 );
-    this.camera.position.z = 20;
+    this.camera.position.z = 25;
 
     this.camera.lookAt( new Vector3(0,0,0) );
 
-    // this.scene.add(new AmbientLight( 0xffffff ));
+    this.scene.add(new AmbientLight( 0xffffff ));
 
     // initialize renderer
     this.renderer = new WebGLRenderer();

@@ -10,14 +10,15 @@ module.exports = {
     filename: `index.js`
   },
   resolve: {
-    extensions: ['.js'],
+    extensions: ['.js', '.glsl'],
     modules: [
       path.resolve(__dirname, 'node_modules')
     ],
     alias: {
       "canvas":    path.resolve(__dirname, "src/canvas"),
       "constants": path.resolve(__dirname, "src/constants"),
-      "node":      path.resolve(__dirname, "src/node")
+      "node":      path.resolve(__dirname, "src/node"),
+      "shaders":   path.resolve(__dirname, "src/shaders")
     }
   },
   devtool: 'source-map',
@@ -33,6 +34,10 @@ module.exports = {
             plugins: ['transform-flow-comments']
           }
         }
+      },
+      {
+        test: /\.glsl$/,
+        use: 'raw-loader'
       }
     ]
   },

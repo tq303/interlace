@@ -20,6 +20,7 @@
     "babel-preset-env": "^1.6.0",
     "babel-preset-stage-2": "^6.24.1",
     "flow-babel-webpack-plugin": "^1.1.0",
+    "raw-loader": "^0.5.1",
     "webpack": "^3.3.0",
     "webpack-dev-server": "^2.5.0"
   }

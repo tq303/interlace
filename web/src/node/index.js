@@ -12,10 +12,16 @@ import {
   Geometry,
   PointsMaterial,
   Points,
-  PointLight
+  PointLight,
+  BackSide,
+  AdditiveBlending,
+  ShaderMaterial,
+  SphereGeometry,
+  MeshBasicMaterial
 } from 'three';
 
 import { LED_COUNT } from 'constants/ledDefinitions';
+import { fragmentShader, vertexShader } from 'shaders';
 
 export default class Node extends Object3D {
 
@@ -46,10 +52,10 @@ export default class Node extends Object3D {
     this.add( this.addCylinder() );
 
     // draw fins
-    for (let i = 0; i < 6; i++) {
-      this.fins[i] = this.addFin(i);
-      this.add( this.fins[i] );
-    }
+    // for (let i = 0; i < 6; i++) {
+    //   this.fins[i] = this.addFin(i);
+    //   this.add( this.fins[i] );
+    // }
 
     // draw LED strips
     for (let i = 0; i < 6; i++) {
@@ -75,27 +81,37 @@ export default class Node extends Object3D {
 
     for (let i = 0; i < 15; i++) {
 
-      // degug tracer
-      const dotGeometry = new Geometry();
-      dotGeometry.vertices.push(new Vector3(this.cylinderDiameter, -(1 + (this.height / 15) * i), 0));
+      const LED = this.createLED();
 
-      const dotMaterial = new PointsMaterial( { size: 1, sizeAttenuation: false } );
-      const dot = new Points( dotGeometry, dotMaterial );
-      dot.position.set(0,0,0);
-      dot.rotateY(angle);
+      LED.position.set(this.cylinderDiameter + .02, -(1 + (this.height / 15) * i), 0);
 
-      group.add(dot);      
+      group.add(LED);      
 
       // light
-      const light = new PointLight( 0xff0000, 1, 10 );
-      light.position.set(dot.position.x, dot.position.y, dot.position.z);
-      light.rotateY(angle);
+      // const light = new PointLight( 0xff0000, 1, 100 );
+      // light.position.set(LED.position.x, LED.position.y, LED.position.z);
 
-      group.add(light);
+      // group.add(light);
 
     }
 
+    group.rotateY(angle);
+
     return group;
+  }
+
+  createLED() {
+    const dotGeometry = new SphereGeometry( .1, 32, 32 );
+
+    const dotMaterial = new ShaderMaterial({
+      uniforms: {},
+      vertexShader,
+      fragmentShader,
+      transparent: true,
+      depthWrite  : false,
+    });
+
+    return new Mesh( dotGeometry, dotMaterial );
   }
 
   finGeometry(position: number) {
