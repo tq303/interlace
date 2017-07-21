@@ -20,7 +20,7 @@ import {
   MeshBasicMaterial
 } from 'three';
 
-import { LED_COUNT } from 'constants/ledDefinitions';
+import { LED_COUNT, STRIP_COUNT } from 'constants/ledDefinitions';
 import { fragmentShader, vertexShader } from 'shaders';
 
 export default class Node extends Object3D {
@@ -41,7 +41,7 @@ export default class Node extends Object3D {
     this.cylinderDiameter = 2;
     this.offsetFin = this.cylinderDiameter;
     this.wireframe = true;
-    this.height = 11;
+    this.height = 8;
 
     this.draw();
   }
@@ -52,17 +52,18 @@ export default class Node extends Object3D {
     // this.add( this.addCylinder() );
 
     // draw fins
-    // for (let i = 0; i < 6; i++) {
+    // for (let i = 0; i < STRIP_COUNT; i++) {
     //   this.fins[i] = this.addFin(i);
     //   this.add( this.fins[i] );
     // }
 
     // draw LED strips
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < STRIP_COUNT; i++) {
       this.strips[i] = this.addStrip(i);
       this.add( this.strips[i] );
     }
 
+    this.rotateX(90 - (180 / STRIP_COUNT) * (180 / Math.PI));
   }
 
   addCylinder() {
@@ -77,13 +78,13 @@ export default class Node extends Object3D {
 
   addStrip(position: number) {
     const group = new Object3D();
-    const angle = ((2 * Math.PI) / 6 * position) + ((2 * Math.PI) / (6 * 2));
+    const angle = ((2 * Math.PI) / STRIP_COUNT * position) + ((2 * Math.PI) / (STRIP_COUNT * 2));
 
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < LED_COUNT; i++) {
 
       const LED = this.createLED();
 
-      LED.position.set(Math.cos(angle) * i * .8, Math.sin(angle) * i * .8, i * .8);
+      LED.position.set(Math.cos(angle) * i * .2, Math.sin(angle) * i * .2, i * .2);
       // LED.rotateY(30 * (180 / Math.PI));
 
       group.add(LED);      
@@ -115,7 +116,7 @@ export default class Node extends Object3D {
 
   finGeometry(position: number) {
 
-    const angle = (2 * Math.PI) / 6 * position;
+    const angle = (2 * Math.PI) / STRIP_COUNT * position;
     
     const shape = new Shape();
 
