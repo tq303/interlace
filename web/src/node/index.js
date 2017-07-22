@@ -1,135 +1,79 @@
 // @flow
 
-import {
-  Object3D,
-  MeshLambertMaterial,
-  Mesh,
-  ExtrudeBufferGeometry,
-  Shape,
-  CylinderBufferGeometry,
-  SpotLight,
-  Vector3,
-  Geometry,
-  PointsMaterial,
-  Points,
-  PointLight,
-  BackSide,
-  AdditiveBlending,
-  ShaderMaterial,
-  SphereGeometry,
-  MeshBasicMaterial
-} from 'three';
+import { Object3D, SphereBufferGeometry, ShaderMaterial, Mesh, CylinderBufferGeometry } from 'three';
 
 import { LED_COUNT, STRIP_COUNT } from 'constants/ledDefinitions';
-import { fragmentShader, vertexShader } from 'shaders';
+import { LEDFragmentShader, vertexShader, boxFragmentShader } from 'shaders';
 
 export default class Node extends Object3D {
 
-  fins:             any;
-  strips:           any;
-  cylinderDiameter: number;
-  offsetFin:        number;
-  wireframe:        boolean;
-  height:           number;
-  tes: any;
+  strips: any;
+  box:    any;
 
   constructor() {
     super();
 
-    this.fins = [];
+    this.box = null;
     this.strips = [];
-    this.cylinderDiameter = 2;
-    this.offsetFin = this.cylinderDiameter;
-    this.wireframe = true;
-    this.height = 8;
 
     this.draw();
   }
 
   draw() {
 
-    // draw cylinder
-    // this.add( this.addCylinder() );
+    this.box = this.addBox();
+    this.add( this.box );
 
-    // draw fins
-    // for (let i = 0; i < STRIP_COUNT; i++) {
-    //   this.fins[i] = this.addFin(i);
-    //   this.add( this.fins[i] );
-    // }
-
-    // draw LED strips
     for (let i = 0; i < STRIP_COUNT; i++) {
-      this.strips[i] = this.addStrip(i);
+      this.strips[i] = this.addLEDStrip(i);
       this.add( this.strips[i] );
     }
-
-    this.rotateX(90 - (180 / STRIP_COUNT) * (180 / Math.PI));
   }
 
-  addCylinder() {
-    const cylinderGeo = new CylinderBufferGeometry( this.cylinderDiameter, this.cylinderDiameter, this.height, 12 );
-    cylinderGeo.translate(0,-this.height/2,0);
-    return new Mesh(cylinderGeo, new MeshLambertMaterial({ color: 0x656565 }));
-  }
+  addBox() {
+    const geometry = new CylinderBufferGeometry(0, 2.9, 2.9, 6, false);
+    geometry.rotateX(-Math.PI / 2);
+    geometry.translate(0, 0, 1.5);
 
-  addFin(position: number) {
-    return new Mesh(this.finGeometry(position), new MeshLambertMaterial({ color: 0x494949 }));
-  }
+    const material = new ShaderMaterial({
+      uniforms: {},
+      vertexShader,
+      fragmentShader: boxFragmentShader,
+      // transparent: true,
+      // depthWrite  : false,
+    });
 
-  addStrip(position: number) {
+    return new Mesh( geometry, material );
+  }
+  
+  addLEDStrip(position: number) {
     const group = new Object3D();
     const angle = ((2 * Math.PI) / STRIP_COUNT * position) + ((2 * Math.PI) / (STRIP_COUNT * 2));
+    const mag = .2;
 
     for (let i = 0; i < LED_COUNT; i++) {
 
       const LED = this.createLED();
 
-      LED.position.set(Math.cos(angle) * i * .2, Math.sin(angle) * i * .2, i * .2);
-      // LED.rotateY(30 * (180 / Math.PI));
+      LED.position.set(Math.cos(angle) * i * mag, Math.sin(angle) * i * mag, i * mag);
 
-      group.add(LED);      
-
-      // light
-      // const light = new PointLight( 0xff0000, 1, 100 );
-      // light.position.set(LED.position.x, LED.position.y, LED.position.z);
-
-      // group.add(light);
-
+      group.add(LED);
     }
 
     return group;
   }
 
   createLED() {
-    const dotGeometry = new SphereGeometry( .1, 32, 32 );
+    const geometry = new SphereBufferGeometry( .1, 8, 8 );
 
-    const dotMaterial = new ShaderMaterial({
+    const material = new ShaderMaterial({
       uniforms: {},
       vertexShader,
-      fragmentShader,
+      fragmentShader: LEDFragmentShader,
       transparent: true,
       depthWrite  : false,
     });
 
-    return new Mesh( dotGeometry, dotMaterial );
-  }
-
-  finGeometry(position: number) {
-
-    const angle = (2 * Math.PI) / STRIP_COUNT * position;
-    
-    const shape = new Shape();
-
-    shape.moveTo(this.cylinderDiameter,1);
-    shape.lineTo(this.cylinderDiameter,-this.height);
-    shape.lineTo(this.cylinderDiameter + (this.height / 3),-(this.height / 3) * 2);
-
-    const geometry = new ExtrudeBufferGeometry( shape, {amount: .3, bevelEnabled: false} );
-
-    geometry.rotateY(angle);
-
-    geometry.translate(0,0,.15);
-
-    return geometry;
+    return new Mesh( geometry, material );
   }
 }

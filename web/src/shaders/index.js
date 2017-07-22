@@ -1,7 +1,9 @@
-import fragmentShader from './fragmentShader';
+import LEDFragmentShader from './LEDFragmentShader';
 import vertexShader from './vertexShader';
+import boxFragmentShader from './boxFragmentShader';
 
 export {
-  fragmentShader,
+  LEDFragmentShader,
+  boxFragmentShader,
   vertexShader,
 };

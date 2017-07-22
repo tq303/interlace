@@ -5,8 +5,7 @@ const FlowBabelWebpackPlugin = require('flow-babel-webpack-plugin');
 module.exports = {
   entry: './src/index.js',
   output: {
-    path: __dirname,
-    publicPath: '/',
+    path: path.resolve(__dirname, 'public'),
     filename: `index.js`
   },
   resolve: {

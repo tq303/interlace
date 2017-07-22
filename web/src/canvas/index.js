@@ -19,11 +19,12 @@ class Canvas {
   scene:    Scene;
   controls: OrbitControls;
 
-  constructor( width: number = 1024, height: number = 576 , loadZ: number = 200 ) {
+  constructor( width: number = window.innerWidth, height: number = window.innerHeight ) {
     // scene and camera
     this.scene    = new Scene();
     this.camera   = new PerspectiveCamera( 75, width / height, 1, 10000 );
-    this.camera.position.z = 25;
+    this.camera.translateZ(25);
+    this.camera.rotateY(-Math.PI / 2);
 
     this.camera.lookAt( new Vector3(0,0,0) );
 
