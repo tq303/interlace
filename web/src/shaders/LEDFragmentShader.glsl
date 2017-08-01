@@ -1,4 +1,5 @@
-vec3 glowColor = vec3(1.0, 1.0, 1.0);
+uniform vec3 colour;
+
 float coeficient = .9;
 float power = 1.0;
 
@@ -14,5 +15,5 @@ void main(){
 
   float intensity = 1.0 - pow(coeficient + dot(vVertexNormal, viewCameraToVertex), power);
 
-  gl_FragColor = vec4(glowColor, intensity);
+  gl_FragColor = vec4(colour, intensity);
 }

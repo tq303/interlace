@@ -3,6 +3,8 @@
 import Canvas from 'canvas';
 import Node   from 'node';
 
+import bandDown from './animations/band-dwn';
+
 const canvas = new Canvas();
 
 const width = 6;
@@ -15,14 +17,20 @@ function createNode(x: number, y: number) {
   const node = new Node();
   node.translateX(1 / width * x * mag);
   node.translateY(1 / height * y * mag);
-  canvas.scene.add( node );
+  canvas.scene.add( node );  
   count++;
 }
 
-for (let x = 0; x < width; x++) {
+/*for (let x = 0; x < width; x++) {
   for (let y = 0; y < height; y++) {
     createNode(x, y);
   }
-}
+}*/
+
+createNode(0, 0);
+
+let frame = 0;
+
+
 
 console.log(count);
