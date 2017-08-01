@@ -7,6 +7,7 @@ import {
   PerspectiveCamera,
   Vector3,
   WebGLRenderer,
+  DirectionalLight,
   AmbientLight
 } from 'three';
 
@@ -19,21 +20,28 @@ class Canvas {
   scene:    Scene;
   controls: OrbitControls;
 
-  constructor( width: number = window.innerWidth, height: number = window.innerHeight ) {
+  constructor () {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
     // scene and camera
     this.scene    = new Scene();
     this.camera   = new PerspectiveCamera( 75, width / height, 1, 10000 );
 
     // move down and back. look upwards
-    this.camera.translateY(-100);
+    this.camera.translateY(-40);
     this.camera.translateZ(-100);
     this.camera.lookAt( new Vector3(0,0,0) );
 
-    this.scene.add(new AmbientLight( 0xffffff ));
+    this.scene.add(new AmbientLight(0x999999));
+
+    const directional = new DirectionalLight(0xffffff)
+    directional.position.set(0, -70, 100).normalize();
+    this.scene.add(directional);
 
     // initialize renderer
     this.renderer = new WebGLRenderer();
-    this.renderer.setSize( width, height );
+    this.renderer.setSize(width, height);
 
     // setup controls
     this.controls = new OrbitControls( this.camera, this.renderer.domElement );
@@ -49,8 +57,8 @@ class Canvas {
   }
 
   loop() {
-      requestAnimationFrame( () => this.loop() );
-      this.renderer.render( this.scene, this.camera );
+      requestAnimationFrame(this.loop.bind(this));
+      this.renderer.render(this.scene, this.camera);
   }
 
   radians( degrees: number ) {
