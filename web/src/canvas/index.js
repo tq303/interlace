@@ -49,8 +49,8 @@ class Canvas {
   }
 
   loop() {
-      requestAnimationFrame( () => this.loop() );
-      this.renderer.render( this.scene, this.camera );
+      requestAnimationFrame(this.loop.bind(this));
+      this.renderer.render(this.scene, this.camera);
   }
 
   radians( degrees: number ) {
