@@ -30,7 +30,7 @@ export default class Node extends Object3D {
 
   addBox() {
     const geometry = new CylinderBufferGeometry(0, 2.9, 2.9, 6, false);
-    geometry.rotateX(-Math.PI / 2);
+    geometry.rotateX(Math.PI);
     geometry.translate(0, 0, 1.5);
 
     this.box = new Mesh( geometry, new MeshPhongMaterial({ color: 0x434343 }) );
@@ -73,7 +73,7 @@ export default class Node extends Object3D {
 
         const led = this.createLED();
 
-        led.gl.position.set(Math.cos(angle) * j * mag, Math.sin(angle) * j * mag, j * mag);
+        led.gl.position.set(Math.cos(angle) * j * mag, j * mag - 1.5, Math.sin(angle) * j * mag);
 
         this.add(led.gl);
 

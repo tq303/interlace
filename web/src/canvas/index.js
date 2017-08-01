@@ -23,9 +23,10 @@ class Canvas {
     // scene and camera
     this.scene    = new Scene();
     this.camera   = new PerspectiveCamera( 75, width / height, 1, 10000 );
-    this.camera.translateZ(25);
-    this.camera.rotateY(-Math.PI / 2);
 
+    // move down and back. look upwards
+    this.camera.translateY(-100);
+    this.camera.translateZ(-100);
     this.camera.lookAt( new Vector3(0,0,0) );
 
     this.scene.add(new AmbientLight( 0xffffff ));
@@ -51,7 +52,7 @@ class Canvas {
       requestAnimationFrame( () => this.loop() );
       this.renderer.render( this.scene, this.camera );
   }
-  
+
   radians( degrees: number ) {
       return degrees * (Math.PI / 180);
   }
