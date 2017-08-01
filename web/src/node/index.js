@@ -21,7 +21,11 @@ export default class Node extends Object3D {
     this.counter = Math.floor(Math.random() * 10);
     this.light   = null;
     this.draw();
-    setInterval(this.updateLights.bind(this), 300);
+
+    //// @TODO this function shall be put in main render loop
+    setInterval(this.updateLights.bind(this), 10);
+
+
   }
 
   draw ():void {
@@ -59,7 +63,7 @@ export default class Node extends Object3D {
 
   updateLights ():void {
     const distance = Math.abs(this.position.x) + Math.abs(this.position.z);
-    const trigger = (((Date.now() - distance) / 1000) % 1) < 0.1;
+    const trigger = (((Date.now() - distance) / 1000) % 1) < 0.15;
 
     const index = ++this.counter % this.leds.length;
     for (var i = 0; i < this.leds.length; i++) {
@@ -87,6 +91,6 @@ Node.material2 = new SpriteMaterial({
 });
 Node.material3 = new SpriteMaterial({
   map:   Node.led_texture,
-  color: 0xff00ff,
+  color: 0xffffff,
   blending: AdditiveBlending,
 });
