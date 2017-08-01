@@ -13,7 +13,7 @@ export default class Grid extends Object3D {
   constructor(options = {}) {
     super();
 
-    this.tileSize    = (options.tileSize)    ? options.tileSize    : 20;
+    this.tileSize    = (options.tileSize)    ? options.tileSize    : 30;
     this.tileSpacing = (options.tileSpacing) ? options.tileSpacing : 0;
     this.pointyTiles = (options.pointyTiles) ? options.pointyTiles : false;
 
@@ -95,11 +95,8 @@ export default class Grid extends Object3D {
     this.cubeToAxial(roundedCube);    
   }
 
-  pixelToDecimalQR(x, y, scale) {
-    let q,r;
-    if (typeof scale !== "number") {
-      scale = 1
-    }
+  pixelToDecimalQR(x, y, scale = 1) {
+    let q, r;
 
     if (this.pointyTiles) {
       q = (1/3 * Math.sqrt(3) * x - 1/3 * -y) / (this.tileSize + this.tileSpacing);
@@ -112,7 +109,7 @@ export default class Grid extends Object3D {
     q /= scale
     r /= scale
 
-    return { q: q, r: r };    
+    return { q, r };
   }
 
   roundCube(coordinates) {
