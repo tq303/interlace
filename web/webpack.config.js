@@ -17,7 +17,8 @@ module.exports = {
       "canvas":    path.resolve(__dirname, "src/canvas"),
       "constants": path.resolve(__dirname, "src/constants"),
       "node":      path.resolve(__dirname, "src/node"),
-      "shaders":   path.resolve(__dirname, "src/shaders")
+      "shaders":   path.resolve(__dirname, "src/shaders"),
+      "grid":      path.resolve(__dirname, "src/grid.js"),
     }
   },
   devtool: 'source-map',

@@ -30,7 +30,7 @@ class Canvas {
 
     // move down and back. look upwards
     this.camera.translateY(-40);
-    this.camera.translateZ(-100);
+    this.camera.translateZ(-200);
     this.camera.lookAt( new Vector3(0,0,0) );
 
     this.scene.add(new AmbientLight(0x999999));

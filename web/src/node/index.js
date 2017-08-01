@@ -24,23 +24,17 @@ export default class Node extends Object3D {
 
     //// @TODO this function shall be put in main render loop
     setInterval(this.updateLights.bind(this), 10);
-
-
   }
 
   draw ():void {
     this.addBox();
     this.addLights();
-
-    // this.light = new PointLight(0xff0000, 1, 5);
-    // this.light.position.set(0, -3.1, 0);
-    // this.add(this.light);
   }
 
   addBox ():void {
     const geometry = new CylinderBufferGeometry(3, 0, 3, 6, true);
     this.box = new Mesh(geometry, new MeshPhongMaterial({
-      color: 0x434343,
+      color: 0x000,
     }));
     this.add(this.box);
   }
