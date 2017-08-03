@@ -13,13 +13,21 @@ export default class Grid extends Object3D {
   constructor(options = {}) {
     super();
 
-    this.tileSize    = (options.tileSize)    ? options.tileSize    : 30;
+    this.tileSize    = (options.tileSize)    ? options.tileSize    : 50;
     this.tileSpacing = (options.tileSpacing) ? options.tileSpacing : 0;
     this.pointyTiles = (options.pointyTiles) ? options.pointyTiles : false;
 
     this.nodes = this.build(0, 0, 5, true);
 
     console.log(`Total nodes :: ${this.nodes.length}`);
+  }
+
+  update() {
+    this.nodes.forEach(({ q, r, node }) => {
+      const center = this.getCenterXY(q, r);
+      node.position.x = center.x;
+      node.position.z = center.y;
+    })
   }
 
   ring(q, r, radius) {
@@ -53,8 +61,8 @@ export default class Grid extends Object3D {
   createNode(q, r) {
     const center = this.getCenterXY(q, r);
     const node = new Node();
-    node.translateX(center.x);
-    node.translateZ(center.y);
+    node.position.x = center.x;
+    node.position.z = center.y;
     this.add(node);
     return {
       q,

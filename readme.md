@@ -5,6 +5,10 @@ This project is the merging of mesh networks, blockchain and an interactive ligh
 ## Prerequisites
 
 ```sh
+sudo apt-get install lus5.2 luarocks libev-dev
+
+luarocks busted // lua test framework
+
 npm install -g flow-bin webpack
 ```
 
@@ -28,10 +32,11 @@ The idea is that each _node_ is representing a physical mesh node which has a mo
 
 Currently for the web application there needs to be the following.
 
-- addition of LED strips to node object
-- addition of functionality to animate the LED strips
 - create animations
 - further alter the node class to have communciation functionality
-- add node functionality to find surrounding nodes
 - send and recieve basic animation trigger data between nodes
-- create mouse over interaction to trigger the animations
+- create mouse over interaction to trigger the animationss
+
+## Node
+
+This is a combination of Lua and C code which powers a nodeMCU board. 

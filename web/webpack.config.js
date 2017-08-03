@@ -19,6 +19,7 @@ module.exports = {
       "node":      path.resolve(__dirname, "src/node"),
       "shaders":   path.resolve(__dirname, "src/shaders"),
       "grid":      path.resolve(__dirname, "src/grid.js"),
+      "dat":       path.resolve(__dirname, "src/lib/dat-gui.min.js"),
     }
   },
   devtool: 'source-map',
