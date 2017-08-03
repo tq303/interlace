@@ -11,3 +11,4 @@ canvas.scene.add(grid);
 
 const gui = new dat.GUI();
 gui.add(grid, 'tileSize', 10, 100).onChange(value => grid.update());
+gui.add(grid, 'showWeb').onChange(value => grid.update());

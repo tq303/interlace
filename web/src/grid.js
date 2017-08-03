@@ -5,7 +5,7 @@
  It use axial positioning and has useful functions for finding neighbours, p2p distance and conversions
  */
 
-import { Object3D } from 'three';
+import { Object3D, Vector3, Geometry, LineDashedMaterial, Line } from 'three';
 
 import Node from 'node';
 
@@ -16,8 +16,12 @@ export default class Grid extends Object3D {
     this.tileSize    = (options.tileSize)    ? options.tileSize    : 50;
     this.tileSpacing = (options.tileSpacing) ? options.tileSpacing : 0;
     this.pointyTiles = (options.pointyTiles) ? options.pointyTiles : false;
+    this.showWeb     = (options.showWeb)     ? options.showWeb     : false;
 
-    this.nodes = this.build(0, 0, 5, true);
+    this.nodes       = this.build(0, 0, 5, true);
+    this.connections = this.connect();
+    
+    this.update();
 
     console.log(`Total nodes :: ${this.nodes.length}`);
   }
@@ -27,7 +31,33 @@ export default class Grid extends Object3D {
       const center = this.getCenterXY(q, r);
       node.position.x = center.x;
       node.position.z = center.y;
-    })
+    });
+
+    this.connections.forEach((connection) => {
+      if (this.showWeb) {
+        connection.material = Grid.LineMaterialShow;
+      } else {
+        connection.material = Grid.LineMaterialHide;
+      }
+    });
+  }
+
+  connect() {
+    const connections = [];
+    this.nodes.forEach(({ q, r }) => {
+      this.neighbors(q, r).forEach((dest) => {
+        const geometry = new Geometry();
+        const center = this.getCenterXY(q, r);
+        const d_center = this.getCenterXY(dest.q, dest.r);
+        geometry.vertices.push(new Vector3(center.x, 0, center.y));
+        geometry.vertices.push(new Vector3(d_center.x, 0, d_center.y));
+        geometry.computeLineDistances();
+        const line = new Line(geometry, Grid.LineMaterialShow);
+        connections.push(line);
+        this.add(line);
+      });
+    });
+    return connections;
   }
 
   ring(q, r, radius) {
@@ -59,10 +89,7 @@ export default class Grid extends Object3D {
   }
 
   createNode(q, r) {
-    const center = this.getCenterXY(q, r);
     const node = new Node();
-    node.position.x = center.x;
-    node.position.z = center.y;
     this.add(node);
     return {
       q,
@@ -148,3 +175,15 @@ export default class Grid extends Object3D {
     return { x: axial.q, y: axial.r, z: -axial.q-axial.r };
   }
 }
+
+Grid.LineMaterialShow = new LineDashedMaterial({
+  color: 0x0DE5FF,
+  dashSize: 2.5,
+  gapSize: 5,
+});
+
+Grid.LineMaterialHide = new LineDashedMaterial({
+  color: 0x000000,
+  dashSize: 2.5,
+  gapSize: 5,
+});
