@@ -29,8 +29,8 @@ class Canvas {
     this.camera   = new PerspectiveCamera( 75, width / height, 1, 10000 );
 
     // move down and back. look upwards
-    this.camera.translateY(-40);
-    this.camera.translateZ(-200);
+    this.camera.translateY(-300);
+    // this.camera.translateZ(-200);
     this.camera.lookAt( new Vector3(0,0,0) );
 
     this.scene.add(new AmbientLight(0x999999));

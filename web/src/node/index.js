@@ -32,7 +32,7 @@ export default class Node extends Object3D {
   }
 
   addBox ():void {
-    const geometry = new CylinderBufferGeometry(3, 0, 3, 6, true);
+    const geometry = new CylinderBufferGeometry(3, 0, 3, STRIP_COUNT, true);
     this.box = new Mesh(geometry, new MeshPhongMaterial({
       color: 0x000,
     }));
@@ -42,12 +42,12 @@ export default class Node extends Object3D {
   addLights ():void {
     const mag = .2;
     for (let i = 0; i < STRIP_COUNT; i++) {
-      const angle = ((2 * Math.PI) / STRIP_COUNT * i) + ((2 * Math.PI) / (STRIP_COUNT * 2));
+      const angle = ((2 * Math.PI) / STRIP_COUNT * i) + (Math.PI / 2);
       const stripe = [];
       for (let j = 1; j < LED_COUNT; j++) {
         const led = new Sprite(Node.material1);
         led.scale.set(4, 4, 4);
-        led.position.set(Math.cos(angle) * j * mag, j * mag - 1.5, Math.sin(angle) * j * mag);
+        led.position.set(Math.cos(angle) * j * mag, j * mag - 2, Math.sin(angle) * j * mag);
         stripe.push(led);
         this.add(led);
       }
