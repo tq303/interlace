@@ -18,46 +18,27 @@ export default class Grid extends Object3D {
     this.pointyTiles = (options.pointyTiles) ? options.pointyTiles : false;
     this.showWeb     = (options.showWeb)     ? options.showWeb     : false;
 
-    this.nodes       = this.build(0, 0, 5, true);
-    this.connections = this.connect();
-    
+    this.nodes = this.build(0, 0, 5, true);    
     this.update();
 
     console.log(`Total nodes :: ${this.nodes.length}`);
   }
 
   update() {
-    this.nodes.forEach(({ q, r, node }) => {
+    this.nodes.forEach(({ q, r, node, connections }) => {
       const center = this.getCenterXY(q, r);
       node.position.x = center.x;
       node.position.z = center.y;
-    });
-
-    this.connections.forEach((connection) => {
-      if (this.showWeb) {
-        connection.material = Grid.LineMaterialShow;
-      } else {
-        connection.material = Grid.LineMaterialHide;
-      }
-    });
-  }
-
-  connect() {
-    const connections = [];
-    this.nodes.forEach(({ q, r }) => {
-      this.neighbors(q, r).forEach((dest) => {
-        const geometry = new Geometry();
-        const center = this.getCenterXY(q, r);
+      this.neighbors(q, r).forEach((dest, index) => {
+        const { geometry } = connections[index];
         const d_center = this.getCenterXY(dest.q, dest.r);
-        geometry.vertices.push(new Vector3(center.x, 0, center.y));
-        geometry.vertices.push(new Vector3(d_center.x, 0, d_center.y));
+        geometry.vertices[0] = (new Vector3(center.x, 0, center.y));
+        geometry.vertices[1]  =(new Vector3(d_center.x, 0, d_center.y));
         geometry.computeLineDistances();
-        const line = new Line(geometry, Grid.LineMaterialShow);
-        connections.push(line);
-        this.add(line);
+        connections[index].material = (this.showWeb) ? Grid.LineMaterialShow : Grid.LineMaterialHide;
+        geometry.verticesNeedUpdate = true;
       });
     });
-    return connections;
   }
 
   ring(q, r, radius) {
@@ -90,11 +71,26 @@ export default class Grid extends Object3D {
 
   createNode(q, r) {
     const node = new Node();
+    const center = this.getCenterXY(q, r);
+    node.position.x = center.x;
+    node.position.z = center.y;
+    const connections = [];
+    this.neighbors(q, r).forEach((dest) => {
+      const geometry = new Geometry();
+      const d_center = this.getCenterXY(dest.q, dest.r);
+      geometry.vertices.push(new Vector3(center.x, 0, center.y));
+      geometry.vertices.push(new Vector3(d_center.x, 0, d_center.y));
+      geometry.computeLineDistances();
+      const line = new Line(geometry, Grid.LineMaterialShow);
+      connections.push(line);
+      this.add(line);
+    });
     this.add(node);
     return {
       q,
       r,
-      node
+      node,
+      connections,
     };
   }
 
