@@ -40,3 +40,10 @@ Currently for the web application there needs to be the following.
 ## Node
 
 This is a combination of Lua and C code which powers a nodeMCU board. 
+
+## Build
+
+WS2812B LED @ 50mA full RGB
+NodeMCU
+  - 18mA deep sleep
+  - 80mA when running

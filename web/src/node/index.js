@@ -8,22 +8,22 @@ import '../../public/stats';
 
 export default class Node extends Object3D {
   box:     Mesh;
-  leds:    Array<any>;
+  ledStrips:    Array<any>;
   counter: number;
   static led_texture: Texture;
-  static material1:   SpriteMaterial;
-  static material2:   SpriteMaterial;
+  static material:   SpriteMaterial;
 
   constructor ():void {
     super();
     this.box     = null;
-    this.leds    = [];
-    this.counter = Math.floor(Math.random() * 10);
+    this.ledStrips    = [];
+    this.counter = 0;
     this.light   = null;
     this.draw();
 
     //// @TODO this function shall be put in main render loop
-    setInterval(this.updateLights.bind(this), 10);
+    // setInterval(this.animateFlashOutwards.bind(this), 10);
+    setInterval(this.animatePulse.bind(this), 10);
   }
 
   draw ():void {
@@ -32,7 +32,7 @@ export default class Node extends Object3D {
   }
 
   addBox ():void {
-    const geometry = new CylinderBufferGeometry(3, 0, 3, STRIP_COUNT, true);
+    const geometry = new CylinderBufferGeometry(2, 0, 2, STRIP_COUNT, true);
     this.box = new Mesh(geometry, new MeshPhongMaterial({
       color: 0x000,
     }));
@@ -43,28 +43,41 @@ export default class Node extends Object3D {
     const mag = .2;
     for (let i = 0; i < STRIP_COUNT; i++) {
       const angle = ((2 * Math.PI) / STRIP_COUNT * i) + (Math.PI / 2);
-      const stripe = [];
+      const strip = [];
       for (let j = 1; j < LED_COUNT; j++) {
-        const led = new Sprite(Node.material1);
+        const led = new Sprite(Node.material);
         led.scale.set(4, 4, 4);
-        led.position.set(Math.cos(angle) * j * mag, j * mag - 2, Math.sin(angle) * j * mag);
-        stripe.push(led);
+        led.position.set(Math.cos(angle) * j * mag, j * mag - 1.2, Math.sin(angle) * j * mag);
+        strip.push(led);
         this.add(led);
       }
-      this.leds.push(stripe);
+      this.ledStrips.push(strip);
     }
   }
 
-  updateLights ():void {
+  animatePulse() {
+    const onOff = ++this.counter & 1;
+    for (var i = 0; i < this.ledStrips.length; i++) {
+      const strip = this.ledStrips[i];
+      for (var j = 0; j < strip.length; j++) {
+        const led = strip[j];
+        const hexColour = onOff ? 0xffffff : 0x000000;
+        led.material.color.setHex(hexColour);
+      }
+    }
+  }
+
+  animateFlashOutwards ():void {
     const distance = Math.abs(this.position.x) + Math.abs(this.position.z);
     const trigger = (((Date.now() - distance) / 1000) % 1) < 0.15;
 
-    const index = ++this.counter % this.leds.length;
-    for (var i = 0; i < this.leds.length; i++) {
-      const stripe = this.leds[i];
-      for (var j = 0; j < stripe.length; j++) {
-        const led = stripe[j];
-        led.material = trigger ? Node.material3 : (index === i ? Node.material2 : Node.material1);
+    const index = ++this.counter % this.ledStrips.length;
+    for (var i = 0; i < this.ledStrips.length; i++) {
+      const strip = this.ledStrips[i];
+      for (var j = 0; j < strip.length; j++) {
+        const led = strip[j];
+        const hexColour = trigger ? 0xffffff : (index === i ? 0xbb0000 : 0x555555);
+        led.material.color.setHex(hexColour);
       }
     }
   }
@@ -72,19 +85,8 @@ export default class Node extends Object3D {
 
 Node.led_texture = new TextureLoader().load('led.png');
 
-Node.material1 = new SpriteMaterial({
+Node.material = new SpriteMaterial({
   map:   Node.led_texture,
   color: 0x555555,
-  blending: AdditiveBlending,
-});
-
-Node.material2 = new SpriteMaterial({
-  map:   Node.led_texture,
-  color: 0xbb0000,
-  blending: AdditiveBlending,
-});
-Node.material3 = new SpriteMaterial({
-  map:   Node.led_texture,
-  color: 0xffffff,
   blending: AdditiveBlending,
 });
