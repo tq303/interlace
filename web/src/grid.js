@@ -7,7 +7,9 @@
 
 import { Object3D, Vector3, Geometry, LineDashedMaterial, Line } from 'three';
 
-import Node from 'node';
+import { puck as Node } from 'node';
+
+console.log(Node);
 
 export default class Grid extends Object3D {
   constructor(options = {}) {
