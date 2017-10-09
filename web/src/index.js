@@ -18,8 +18,14 @@ gui.add(grid, 'showWeb').onChange(value => grid.update());
 
 const boxes = grid.nodes.map(n => n.node.box);
 
+let ticking = false;
+
 function handleMouseEvent(e) {
   e.preventDefault();
+
+  if (ticking) return;
+
+  ticking = true;
 
   const mouse = new Vector2();
   mouse.x = ( e.clientX / window.innerWidth ) * 2 - 1;
@@ -29,11 +35,11 @@ function handleMouseEvent(e) {
   raycaster.setFromCamera( mouse, canvas.camera );
   const intersects = raycaster.intersectObjects( boxes );
 
-  if ( intersects.length > 0 ) {
+  if (intersects.length > 0) {
 
-    if ( INTERSECTED_NODE !== intersects[ 0 ].object ) {
+    if (INTERSECTED_NODE !== intersects[ 0 ].object) {
 
-      if ( INTERSECTED_NODE ) {
+      if (INTERSECTED_NODE) {
         INTERSECTED_NODE.material.color.setHex( INTERSECTED_NODE.currentHex );
       }
 
@@ -46,13 +52,19 @@ function handleMouseEvent(e) {
       console.log(INTERACTING_NODE);
     } else {
 
-      if ( INTERSECTED_NODE ) {
+      if (INTERSECTED_NODE) {
         INTERSECTED_NODE.material.color.setHex( INTERSECTED_NODE.currentHex );
       }
 
       INTERSECTED_NODE = null;
     }
+
   }
+
+  const timeout = setTimeout(() => {
+    ticking = false;
+    clearTimeout(timeout);
+  }, 250);
 }
 
 document.addEventListener('mousemove', handleMouseEvent);
