@@ -23,48 +23,47 @@ let ticking = false;
 function handleMouseEvent(e) {
   e.preventDefault();
 
-  if (ticking) return;
-
-  ticking = true;
+  if (ticking) {
+    const timeout = setTimeout(() => {
+      ticking = false;
+      clearTimeout(timeout);
+    }, 250);
+    return;
+  }
 
   const mouse = new Vector2();
-  mouse.x = ( e.clientX / window.innerWidth ) * 2 - 1;
-  mouse.y = - ( e.clientY / window.innerHeight ) * 2 + 1;
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
 
   const raycaster = new Raycaster();
-  raycaster.setFromCamera( mouse, canvas.camera );
-  const intersects = raycaster.intersectObjects( boxes );
+  raycaster.setFromCamera(mouse, canvas.camera);
+  const intersects = raycaster.intersectObjects(boxes);
 
   if (intersects.length > 0) {
 
     if (INTERSECTED_NODE !== intersects[ 0 ].object) {
 
+      ticking = true;
+
       if (INTERSECTED_NODE) {
-        INTERSECTED_NODE.material.color.setHex( INTERSECTED_NODE.currentHex );
+        INTERSECTED_NODE.material.color.setHex(INTERSECTED_NODE.currentHex);
       }
 
       INTERSECTED_NODE = intersects[ 0 ].object;
       INTERSECTED_NODE.currentHex = INTERSECTED_NODE.material.color.getHex();
-      INTERSECTED_NODE.material.color.setHex( 0x500b82 );
+      INTERSECTED_NODE.material.color.setHex(0x500b82);
 
       const INTERACTING_NODE = grid.nodes.find(n => n.node.box === INTERSECTED_NODE);
 
       console.log(INTERACTING_NODE);
-    } else {
-
-      if (INTERSECTED_NODE) {
-        INTERSECTED_NODE.material.color.setHex( INTERSECTED_NODE.currentHex );
-      }
-
-      INTERSECTED_NODE = null;
+    }
+  } else {
+    if (INTERSECTED_NODE) {
+      INTERSECTED_NODE.material.color.setHex(INTERSECTED_NODE.currentHex);
     }
 
+    INTERSECTED_NODE = null;
   }
-
-  const timeout = setTimeout(() => {
-    ticking = false;
-    clearTimeout(timeout);
-  }, 250);
 }
 
 document.addEventListener('mousemove', handleMouseEvent);
