@@ -1,5 +1,6 @@
 const path = require('path');
 
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 const FlowBabelWebpackPlugin = require('flow-babel-webpack-plugin');
 
 module.exports = {
@@ -43,6 +44,7 @@ module.exports = {
     ]
   },
   plugins: [
-    new FlowBabelWebpackPlugin()
+    new FlowBabelWebpackPlugin(),
+    new UglifyJSPlugin(),
   ]
 };
