@@ -5,7 +5,7 @@ import Canvas from 'canvas';
 import Node   from 'node';
 import Grid   from './grid';
 
-let INTERSECTED;
+let INTERSECTED_NODE;
 
 const grid   = new Grid();
 const canvas = new Canvas();
@@ -16,7 +16,7 @@ const gui = new dat.GUI();
 gui.add(grid, 'tileSize', 10, 100).onChange(value => grid.update());
 gui.add(grid, 'showWeb').onChange(value => grid.update());
 
-const nodes = grid.nodes.map(n => n.node.box);
+const boxes = grid.nodes.map(n => n.node.box);
 
 function handleMouseEvent(e) {
   e.preventDefault();
@@ -27,26 +27,31 @@ function handleMouseEvent(e) {
 
   const raycaster = new Raycaster();
   raycaster.setFromCamera( mouse, canvas.camera );
-  const intersects = raycaster.intersectObjects( nodes );
+  const intersects = raycaster.intersectObjects( boxes );
 
   if ( intersects.length > 0 ) {
 
-    if ( INTERSECTED !== intersects[ 0 ].object ) {
+    if ( INTERSECTED_NODE !== intersects[ 0 ].object ) {
 
-      if ( INTERSECTED ) INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+      if ( INTERSECTED_NODE ) {
+        INTERSECTED_NODE.material.color.setHex( INTERSECTED_NODE.currentHex );
+      }
 
-      INTERSECTED = intersects[ 0 ].object;
-      INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
-      INTERSECTED.material.color.setHex( 0x500b82 );
+      INTERSECTED_NODE = intersects[ 0 ].object;
+      INTERSECTED_NODE.currentHex = INTERSECTED_NODE.material.color.getHex();
+      INTERSECTED_NODE.material.color.setHex( 0x500b82 );
 
+      const INTERACTING_NODE = grid.nodes.find(n => n.node.box === INTERSECTED_NODE);
+
+      console.log(INTERACTING_NODE);
+    } else {
+
+      if ( INTERSECTED_NODE ) {
+        INTERSECTED_NODE.material.color.setHex( INTERSECTED_NODE.currentHex );
+      }
+
+      INTERSECTED_NODE = null;
     }
-
-  } else {
-
-    if ( INTERSECTED ) INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
-
-    INTERSECTED = null;
-
   }
 }
 
