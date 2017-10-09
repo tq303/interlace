@@ -31,6 +31,8 @@ function handleMouseEvent(e) {
     return;
   }
 
+  ticking = true;
+  
   const mouse = new Vector2();
   mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
   mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
@@ -42,8 +44,6 @@ function handleMouseEvent(e) {
   if (intersects.length > 0) {
 
     if (INTERSECTED_NODE !== intersects[ 0 ].object) {
-
-      ticking = true;
 
       if (INTERSECTED_NODE) {
         INTERSECTED_NODE.material.color.setHex(INTERSECTED_NODE.currentHex);
