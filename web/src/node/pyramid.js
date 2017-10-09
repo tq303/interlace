@@ -1,8 +1,23 @@
 // @flow
 
-import { AdditiveBlending, PointLight, Vector3, Sprite, Texture, TextureLoader, SpriteMaterial, Object3D, SphereBufferGeometry, ShaderMaterial, Mesh, CylinderBufferGeometry, MeshPhongMaterial, Color } from 'three';
+import {
+  AdditiveBlending,
+  PointLight,
+  Vector3,
+  Sprite,
+  Texture,
+  TextureLoader,
+  SpriteMaterial,
+  Object3D,
+  SphereBufferGeometry,
+  ShaderMaterial,
+  Mesh,
+  CylinderBufferGeometry,
+  MeshPhongMaterial,
+  Color
+} from 'three';
 
-import { LED_COUNT, STRIP_COUNT, INACTIVE_COLOUR } from 'constants/ledDefinitions';
+import {LED_COUNT,  STRIP_COUNT, INACTIVE_COLOUR } from 'constants/ledDefinitions';
 import { LEDFragmentShader, vertexShader, boxFragmentShader } from 'shaders';
 import '../../public/stats';
 
@@ -28,7 +43,7 @@ export default class Node extends Object3D {
   addBox ():void {
     const geometry = new CylinderBufferGeometry(2, 0, 2, STRIP_COUNT, true);
     this.box = new Mesh(geometry, new MeshPhongMaterial({
-      color: 0x000,
+      color: 0x000000,
     }));
     this.add(this.box);
   }
@@ -55,6 +70,6 @@ Node.led_texture = new TextureLoader().load('led.png');
 
 Node.material = new SpriteMaterial({
   map:   Node.led_texture,
-  color: 0x555555,
+  color: 0xffffff,
   blending: AdditiveBlending,
 });

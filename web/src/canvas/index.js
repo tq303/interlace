@@ -29,7 +29,7 @@ class Canvas {
     this.camera = new PerspectiveCamera( 75, width / height, 1, 10000 );
 
     // move down and back. look upwards
-    this.camera.translateY(-10);
+    this.camera.translateY(-150);
     // this.camera.translateZ(-200);
     this.camera.lookAt( new Vector3(0,0,0) );
 

@@ -20,6 +20,11 @@ export default class Node extends Object3D {
     this.box = null;
     this.ledStrips = [];
     this.draw();
+
+    this.counter = 0;
+
+    // setInterval(this.animate.bind(this), 500);
+    // this.animate();
   }
 
   draw ():void {
@@ -36,20 +41,35 @@ export default class Node extends Object3D {
   }
 
   addLights ():void {
-    const mag = 2.3;
+    const mag = 2.2;
     for (let j = 0; j < STRIP_COUNT; j++) {
+      const strip = [];
       for (let i = 0; i < LED_COUNT; i++) {
         const angle = ((2 * Math.PI) / LED_COUNT * i);
-        const strip = [];
         const led = new Sprite(Node.material);
         led.material.color.setHex(0xffffff);
-        led.scale.set(4, 4, 4);
+        led.scale.set(6, 6, 6);
         led.position.set(Math.cos(angle) * mag, j - .5, Math.sin(angle) * mag);
         strip.push(led);
         this.add(led);
-        this.ledStrips.push(strip);
       }      
+      this.ledStrips.push(strip);
     }
+  }
+
+  animate() {
+    if (this.counter === LED_COUNT) {
+      this.counter = 0;
+    }
+
+    this.ledStrips.forEach(strip => {
+      strip.forEach((led, index) => {
+        led.material.color.setHex(0x000);
+      });
+      strip[this.counter].material.color.setHex(0xfff);
+    });
+
+    this.counter+=1;
   }
 }
 

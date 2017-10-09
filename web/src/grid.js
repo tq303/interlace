@@ -9,8 +9,6 @@ import { Object3D, Vector3, Geometry, LineDashedMaterial, Line } from 'three';
 
 import { puck as Node } from 'node';
 
-console.log(Node);
-
 export default class Grid extends Object3D {
   constructor(options = {}) {
     super();
@@ -20,7 +18,7 @@ export default class Grid extends Object3D {
     this.pointyTiles = (options.pointyTiles) ? options.pointyTiles : false;
     this.showWeb     = (options.showWeb)     ? options.showWeb     : false;
 
-    this.nodes = this.build(0, 0, 5, true);    
+    this.nodes = this.build(0, 0, 3);    
     this.update();
 
     console.log(`Total nodes :: ${this.nodes.length}`);
@@ -48,7 +46,7 @@ export default class Grid extends Object3D {
     const moveDirections = [[1,0], [0,-1], [-1,0], [-1,1], [0,1], [1,0], [1,-1]];
 
     moveDirections.forEach((moveDirection, moveDirectionIndex) => {
-      for (let i = 0; i < radius - 1; i++) {
+      for (let i = 0; i <= radius; i++) {
         q += moveDirection[0];
         r += moveDirection[1];
         if (moveDirectionIndex !== 0) {
@@ -60,12 +58,12 @@ export default class Grid extends Object3D {
     return result;
   }
 
-  build(q, r, radius, solid) {
+  build(q, r, radius, solid = true) {
     let result = []
     if (solid) {
       result.push(this.createNode(0,0));
     }
-    for (let currentRing = 1; currentRing < radius; currentRing++) {
+    for (let currentRing = 0; currentRing < radius; currentRing++) {
       result.push(...this.ring(q, r, currentRing));
     }
     return result;  
