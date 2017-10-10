@@ -18,8 +18,9 @@ export default class Grid extends Object3D {
     this.pointyTiles = (options.pointyTiles) ? options.pointyTiles : false;
     this.showWeb     = (options.showWeb)     ? options.showWeb     : false;
 
-    this.nodes = this.build(0, 0, 3);    
-    this.update();
+    this.nodes = this.build(0, 0, 3);
+    this.connectNodes();
+    // this.update();
 
     console.log(`Total nodes :: ${this.nodes.length}`);
   }
@@ -69,28 +70,41 @@ export default class Grid extends Object3D {
     return result;  
   }
 
+  connectNodes() {
+    this.nodes.forEach((node) => {
+      const { q, r } = node;
+      const connections = [];
+
+      this.neighbors(q, r).forEach((dest) => {
+        const potential = this.findNeighbour(dest.q, dest.r);
+
+        if (potential) {
+          const center = this.getCenterXY(q, r);
+          const geometry = new Geometry();
+          const d_center = this.getCenterXY(dest.q, dest.r);
+          geometry.vertices.push(new Vector3(center.x, 0, center.y));
+          geometry.vertices.push(new Vector3(d_center.x, 0, d_center.y));
+          geometry.computeLineDistances();
+          const line = new Line(geometry, Grid.LineMaterialShow);
+          connections.push(line);
+          this.add(line);
+        }
+      });      
+    });
+  }
+
   createNode(q, r) {
-    const node = new Node();
     const center = this.getCenterXY(q, r);
+
+    const node = new Node();
     node.position.x = center.x;
     node.position.z = center.y;
-    const connections = [];
-    this.neighbors(q, r).forEach((dest) => {
-      const geometry = new Geometry();
-      const d_center = this.getCenterXY(dest.q, dest.r);
-      geometry.vertices.push(new Vector3(center.x, 0, center.y));
-      geometry.vertices.push(new Vector3(d_center.x, 0, d_center.y));
-      geometry.computeLineDistances();
-      const line = new Line(geometry, Grid.LineMaterialShow);
-      connections.push(line);
-      this.add(line);
-    });
     this.add(node);
+    
     return {
       q,
       r,
       node,
-      connections,
     };
   }
 
@@ -101,6 +115,10 @@ export default class Grid extends Object3D {
       result.push({ q: q+neighbor[0], r: r+neighbor[1] });
     });
     return result;    
+  }
+
+  findNeighbour(q, r) {
+    return this.nodes.find(node => node.q === q && node.r === r);
   }
 
   getCenterXY(q, r) {

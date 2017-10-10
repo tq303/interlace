@@ -45,6 +45,6 @@ module.exports = {
   },
   plugins: [
     new FlowBabelWebpackPlugin(),
-    new UglifyJSPlugin(),
+    // new UglifyJSPlugin(),
   ]
 };
