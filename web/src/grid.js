@@ -13,33 +13,18 @@ export default class Grid extends Object3D {
   constructor(options = {}) {
     super();
 
-    this.tileSize    = (options.tileSize)    ? options.tileSize    : 50;
+    this.tileSize    = (options.tileSize)    ? options.tileSize    : 20;
     this.tileSpacing = (options.tileSpacing) ? options.tileSpacing : 0;
     this.pointyTiles = (options.pointyTiles) ? options.pointyTiles : false;
     this.showWeb     = (options.showWeb)     ? options.showWeb     : false;
+    this.showHover   = (options.showHover)   ? options.showHover   : false;
 
     this.nodes = this.build(0, 0, 3);
     this.connectNodes();
-    // this.update();
+
+    this.showAllConnection();
 
     console.log(`Total nodes :: ${this.nodes.length}`);
-  }
-
-  update() {
-    this.nodes.forEach(({ q, r, node, connections }) => {
-      const center = this.getCenterXY(q, r);
-      node.position.x = center.x;
-      node.position.z = center.y;
-      this.neighbors(q, r).forEach((dest, index) => {
-        const { geometry } = connections[index];
-        const d_center = this.getCenterXY(dest.q, dest.r);
-        geometry.vertices[0] = (new Vector3(center.x, 0, center.y));
-        geometry.vertices[1]  =(new Vector3(d_center.x, 0, d_center.y));
-        geometry.computeLineDistances();
-        connections[index].material = (this.showWeb) ? Grid.LineMaterialShow : Grid.LineMaterialHide;
-        geometry.verticesNeedUpdate = true;
-      });
-    });
   }
 
   ring(q, r, radius) {
@@ -71,12 +56,12 @@ export default class Grid extends Object3D {
   }
 
   connectNodes() {
-    this.nodes.forEach((node) => {
+    this.nodes = this.nodes.map((node) => {
       const { q, r } = node;
       const connections = [];
 
-      this.neighbors(q, r).forEach((dest) => {
-        const potential = this.findNeighbour(dest.q, dest.r);
+      this.findPotentialNeighbours(q, r).forEach((dest) => {
+        const potential = this.findNode(dest.q, dest.r);
 
         if (potential) {
           const center = this.getCenterXY(q, r);
@@ -86,10 +71,20 @@ export default class Grid extends Object3D {
           geometry.vertices.push(new Vector3(d_center.x, 0, d_center.y));
           geometry.computeLineDistances();
           const line = new Line(geometry, Grid.LineMaterialShow);
-          connections.push(line);
+          connections.push({
+            line,
+            q: dest.q,
+            r: dest.r
+          });
           this.add(line);
         }
-      });      
+      });
+
+      return {
+        ...node,
+        connections
+      };
+
     });
   }
 
@@ -100,7 +95,7 @@ export default class Grid extends Object3D {
     node.position.x = center.x;
     node.position.z = center.y;
     this.add(node);
-    
+
     return {
       q,
       r,
@@ -108,7 +103,7 @@ export default class Grid extends Object3D {
     };
   }
 
-  neighbors(q, r) {
+  findPotentialNeighbours(q, r) {
     const result = [];
     const neighbors = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
     neighbors.forEach((neighbor) => {
@@ -117,8 +112,48 @@ export default class Grid extends Object3D {
     return result;    
   }
 
-  findNeighbour(q, r) {
+  findNode(q, r) {
     return this.nodes.find(node => node.q === q && node.r === r);
+  }
+
+  showConnections(q, r, show = true) {
+    const node = this.findNode(q, r);
+
+    if (node && this.showHover && !this.showWeb) {
+      node.connections.forEach((link) => {
+        link.line.material = this.showHideLineMaterial(show);
+      });
+    }
+  }
+
+  showAllConnection() {
+    this.nodes.forEach(({ q, r, node, connections }) => {
+      connections.forEach((link) => {
+        link.line.material = this.showHideLineMaterial(this.showWeb);
+      });
+    });
+  }
+
+  updateNodePositions() {
+    this.nodes.forEach(({ q, r, node, connections }) => {
+      const center = this.getCenterXY(q, r);
+      node.position.x = center.x;
+      node.position.z = center.y;
+
+      connections.forEach((link) => {
+        const { geometry } = link.line;
+        const d_center = this.getCenterXY(link.q, link.r);
+        geometry.vertices[0] = (new Vector3(center.x, 0, center.y));
+        geometry.vertices[1] = (new Vector3(d_center.x, 0, d_center.y));
+        geometry.computeLineDistances();
+        link.line.material = this.showHideLineMaterial(this.showWeb);
+        geometry.verticesNeedUpdate = true;
+      });
+    });
+  }
+
+  showHideLineMaterial(show = true) {
+    return (show) ? Grid.LineMaterialShow : Grid.LineMaterialHide;
   }
 
   getCenterXY(q, r) {

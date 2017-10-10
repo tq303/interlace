@@ -6,6 +6,7 @@ import Node   from 'node';
 import Grid   from './grid';
 
 let INTERSECTED_NODE;
+let HOVER_NODE;
 
 const grid   = new Grid();
 const canvas = new Canvas();
@@ -14,9 +15,14 @@ canvas.scene.add(grid);
 
 // gui
 const gui = new dat.GUI();
-gui.add(grid, 'tileSize', 10, 100).onChange(value => grid.update());
-gui.add(grid, 'showWeb').onChange(value => grid.update());
-
+gui.add(grid, 'tileSize', 10, 100).onChange(value => grid.updateNodePositions());
+gui.add(grid, 'showWeb').onChange(value => grid.showAllConnection());
+gui.add(canvas.camera.position, 'y', 0, 400);
+gui.add(grid, 'showHover').onChange((value) => {
+  if (HOVER_NODE) {
+    grid.showConnections(HOVER_NODE.q, HOVER_NODE.r, false);
+  }
+});
 
 // mouse detection
 const boxes = grid.nodes.map(n => n.node.box);
@@ -56,13 +62,14 @@ function handleMouseEvent(e) {
       INTERSECTED_NODE.currentHex = INTERSECTED_NODE.material.color.getHex();
       INTERSECTED_NODE.material.color.setHex(0x500b82);
 
-      const INTERACTING_NODE = grid.nodes.find(n => n.node.box === INTERSECTED_NODE);
+      HOVER_NODE = grid.nodes.find(n => n.node.box === INTERSECTED_NODE);
 
-      console.log(INTERACTING_NODE);
+      grid.showConnections(HOVER_NODE.q, HOVER_NODE.r);
     }
   } else {
     if (INTERSECTED_NODE) {
       INTERSECTED_NODE.material.color.setHex(INTERSECTED_NODE.currentHex);
+      grid.showConnections(HOVER_NODE.q, HOVER_NODE.r, false);
     }
 
     INTERSECTED_NODE = null;
