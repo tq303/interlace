@@ -17,7 +17,7 @@ export default class Grid extends Object3D {
     this.tileSpacing = (options.tileSpacing) ? options.tileSpacing : 0;
     this.pointyTiles = (options.pointyTiles) ? options.pointyTiles : false;
     this.showWeb     = (options.showWeb)     ? options.showWeb     : false;
-    this.showHover   = (options.showHover)   ? options.showHover   : false;
+    this.showHover   = (options.showHover)   ? options.showHover   : true;
 
     this.nodes = this.build(0, 0, 3);
     this.connectNodes();
