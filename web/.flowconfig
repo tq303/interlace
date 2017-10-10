@@ -9,5 +9,6 @@ module.name_mapper='^canvas\(.*\)$' -> '<PROJECT_ROOT>/src/canvas/\1'
 module.name_mapper='^constants\(.*\)$' -> '<PROJECT_ROOT>/src/constants/\1'
 module.name_mapper='^node\(.*\)$' -> '<PROJECT_ROOT>/src/node/\1'
 module.name_mapper='^shaders\(.*\)$' -> '<PROJECT_ROOT>/src/shaders/\1'
+module.name_mapper='^stats\(.*\)$' -> '<PROJECT_ROOT>/src/lib/stats.js/\1'
 
 [lints]

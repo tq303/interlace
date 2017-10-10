@@ -6,7 +6,6 @@ const LED_COUNT = 15;
 const STRIP_COUNT = 2;
 
 import { LEDFragmentShader, vertexShader, boxFragmentShader } from 'shaders';
-import '../../public/stats';
 
 export default class Node extends Object3D {
   box:     Mesh;

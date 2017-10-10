@@ -19,7 +19,6 @@ import {
 
 import {LED_COUNT,  STRIP_COUNT, INACTIVE_COLOUR } from 'constants/ledDefinitions';
 import { LEDFragmentShader, vertexShader, boxFragmentShader } from 'shaders';
-import '../../public/stats';
 
 export default class Node extends Object3D {
   box:     Mesh;

@@ -21,9 +21,10 @@ module.exports = {
       "shaders":   path.resolve(__dirname, "src/shaders"),
       "grid":      path.resolve(__dirname, "src/grid.js"),
       "dat":       path.resolve(__dirname, "src/lib/dat-gui.min.js"),
+      "stats":     path.resolve(__dirname, "src/lib/stats.js"),
     }
   },
-  devtool: 'source-map',
+  devtool: process.env.NODE_ENV === 'production' ? 'none' : 'source-map',
   module: {
     rules: [
       {
@@ -45,6 +46,9 @@ module.exports = {
   },
   plugins: [
     new FlowBabelWebpackPlugin(),
-    // new UglifyJSPlugin(),
-  ]
+    process.env.NODE_ENV === 'production' ? new UglifyJSPlugin() : () => {},
+  ],
+  externals: {
+    Stats: 'Stats'
+  }
 };

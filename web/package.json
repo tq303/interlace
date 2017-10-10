@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "local": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --content-base public/ --port 8088",
-    "build": "./node_modules/webpack/bin/webpack.js"
+    "build": "NODE_ENV=production ./node_modules/webpack/bin/webpack.js"
   },
   "author": "",
   "license": "ISC",

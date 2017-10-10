@@ -11,6 +11,8 @@ import {
   AmbientLight
 } from 'three';
 
+import stats from '../lib/stats.js';
+
 const OrbitControls = require('three-orbit-controls')(THREE);
 
 class Canvas {
@@ -19,6 +21,7 @@ class Canvas {
   camera:   PerspectiveCamera;
   scene:    Scene;
   controls: OrbitControls;
+  stats:    any;
 
   constructor () {
     const width = window.innerWidth;
@@ -54,13 +57,25 @@ class Canvas {
 
     if (canvasDOM) canvasDOM.appendChild( this.renderer.domElement );
 
+    // setup stats
+    this.stats = new stats();
+    this.stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+
+    if (document.body) {
+      document.body.appendChild( this.stats.dom );      
+    }
+
     // begin loop
     this.loop();
   }
 
-  loop() {
-      requestAnimationFrame(this.loop.bind(this));
-      this.renderer.render(this.scene, this.camera);
+  loop() {    
+    this.stats.begin();
+
+    requestAnimationFrame(this.loop.bind(this));
+    this.renderer.render(this.scene, this.camera);
+
+    this.stats.end();
   }
 
   radians( degrees: number ) {
