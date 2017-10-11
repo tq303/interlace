@@ -18,7 +18,7 @@ export default class Grid extends Object3D {
     this.pointyTiles      = (options.pointyTiles)      ? options.pointyTiles      : false;
     this.showWeb          = (options.showWeb)          ? options.showWeb          : false;
     this.showNeighbours   = (options.showNeighbours)   ? options.showNeighbours   : false;
-    this.animateRecursive = (options.animateRecursive) ? options.animateRecursive : false;
+    this.animateRecursive = (options.animateRecursive) ? options.animateRecursive : true;
     this.showLongestRoute = (options.showLongestRoute) ? options.showLongestRoute : true;
 
     this.nodes = this.build(0, 0, 3);
