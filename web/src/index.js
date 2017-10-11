@@ -18,11 +18,13 @@ const gui = new dat.GUI();
 gui.add(grid, 'tileSize', 10, 100).onChange(value => grid.updateNodePositions());
 gui.add(grid, 'showWeb').onChange(value => grid.showAllConnection());
 gui.add(canvas.camera.position, 'y', 0, 400);
-gui.add(grid, 'showHover').onChange((value) => {
+gui.add(grid, 'showNeighbours').onChange((value) => {
   if (HOVER_NODE) {
     grid.showConnections(HOVER_NODE.q, HOVER_NODE.r, false);
   }
 });
+gui.add(grid, 'animateRecursive');
+gui.add(grid, 'showLongestRoute');
 
 // mouse detection
 const boxes = grid.nodes.map(n => n.node.box);

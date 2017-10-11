@@ -13,11 +13,13 @@ export default class Grid extends Object3D {
   constructor(options = {}) {
     super();
 
-    this.tileSize    = (options.tileSize)    ? options.tileSize    : 20;
-    this.tileSpacing = (options.tileSpacing) ? options.tileSpacing : 0;
-    this.pointyTiles = (options.pointyTiles) ? options.pointyTiles : false;
-    this.showWeb     = (options.showWeb)     ? options.showWeb     : false;
-    this.showHover   = (options.showHover)   ? options.showHover   : true;
+    this.tileSize         = (options.tileSize)         ? options.tileSize         : 20;
+    this.tileSpacing      = (options.tileSpacing)      ? options.tileSpacing      : 0;
+    this.pointyTiles      = (options.pointyTiles)      ? options.pointyTiles      : false;
+    this.showWeb          = (options.showWeb)          ? options.showWeb          : false;
+    this.showNeighbours   = (options.showNeighbours)   ? options.showNeighbours   : false;
+    this.animateRecursive = (options.animateRecursive) ? options.animateRecursive : false;
+    this.showLongestRoute = (options.showLongestRoute) ? options.showLongestRoute : true;
 
     this.nodes = this.build(0, 0, 3);
     this.connectNodes();
@@ -123,7 +125,7 @@ export default class Grid extends Object3D {
     return this.nodes.find(node => node.q === q && node.r === r);
   }
 
-  findLongestRoute(q, r) {
+  findLongestRoute(q, r, show = true) {
     const neighbours = this.neighbourOptions();
 
     const longest = neighbours.map((neighbour) => {
@@ -131,21 +133,25 @@ export default class Grid extends Object3D {
     }).map((route, i) => {
 
       // animate
-      route.nodeList.forEach((node) => {
-        setTimeout(() => {
-          this.showHideNode(node, true, 0x0E8200);
-        }, 50 * route.routeLength);
-      });
+      if (this.animateRecursive) {
+        route.nodeList.forEach((node) => {
+          setTimeout(() => {
+            this.showHideNode(node, show, 0x0E8200);
+          }, 50 * route.routeLength);
+        });        
+      }
 
       return route;
     }).sort((a, b) => a.routeLength > b.routeLength ? -1 : 1)[0];
 
     // indicate route
-    /*setTimeout(() => {
-      longest.nodeList.forEach((node) => {
-        this.showHideNode(node, true, 0xB14800);
-      });
-    }, 50 * longest.routeLength + 1);*/
+    if (this.showLongestRoute) {
+      setTimeout(() => {
+        longest.nodeList.forEach((node) => {
+          this.showHideNode(node, show, 0xB14800);
+        });
+      }, 50 * longest.routeLength + 1);      
+    }
 
     return longest;
   }
@@ -165,17 +171,7 @@ export default class Grid extends Object3D {
   }
 
   hideRecursiveNeighbours(q, r) {
-    const neighbours = this.neighbourOptions();
-
-    const lengths = neighbours.map((neighbour) => {
-      return this.resursiveLookup(q, r, neighbour, null);
-    }).forEach((route, i) => {
-      route.nodeList.forEach((node) => {
-        setTimeout(() => {
-          this.showHideNode(node, false);
-        }, 50 * route.routeLength);
-      });
-    });
+    this.findLongestRoute(q, r, false)
   }
 
   resursiveLookup(q, r, neighbour, route = null) {
@@ -198,13 +194,13 @@ export default class Grid extends Object3D {
       route.nodeList.push(node);
       route.routeLength += 1;
       return this.resursiveLookup(next.q, next.r, neighbour, route);
-    }
+    }this
 
     return route;
   }
 
   showConnections(node, show = true) {
-    if (node && this.showHover && !this.showWeb) {
+    if (node && this.showNeighbours && !this.showWeb) {
       node.connections.forEach((link) => {
         link.line.material = this.showHideLineMaterial(show);
       });
