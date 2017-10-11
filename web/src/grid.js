@@ -125,8 +125,21 @@ export default class Grid extends Object3D {
 
   findLongestRoute(q, r) {
     const neighbours = this.neighbourOptions();
-    const lengths = neighbours.map(neighbour => this.resursiveLookup(q, r, neighbour));
-    console.log(lengths);
+    let longest = {
+      routeLength: 0,
+      axial: null,
+      q,
+      r
+    };
+    const lengths = neighbours.map((neighbour) => {
+      return this.resursiveLookup(q, r, neighbour);
+    }).forEach((length, i) => {
+      if (length >= longest.routeLength) {
+        longest.routeLength = length;
+        longest.axial = neighbours[i];
+      }
+    });
+    return longest;
   }
 
   showHideNode(q, r, show = true, colour = 0x500b82) {
