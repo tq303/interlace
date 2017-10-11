@@ -29,20 +29,8 @@ gui.add(grid, 'showLongestRoute');
 // mouse detection
 const boxes = grid.nodes.map(n => n.node.box);
 
-let ticking = false;
-
 function handleMouseEvent(e) {
   e.preventDefault();
-
-  if (ticking) {
-    const timeout = setTimeout(() => {
-      ticking = false;
-      clearTimeout(timeout);
-    }, 250);
-    return;
-  }
-
-  ticking = true;
   
   const mouse = new Vector2();
   mouse.x = (e.clientX / window.innerWidth) * 2 - 1;

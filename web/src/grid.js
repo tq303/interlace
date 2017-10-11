@@ -171,7 +171,7 @@ export default class Grid extends Object3D {
   }
 
   hideRecursiveNeighbours(q, r) {
-    this.findLongestRoute(q, r, false)
+    this.findLongestRoute(q, r, false);
   }
 
   resursiveLookup(q, r, neighbour, route = null) {
