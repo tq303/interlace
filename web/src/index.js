@@ -64,6 +64,7 @@ function handleMouseEvent(e) {
       grid.showHideNode(HOVER_NODE, true);
 
       grid.showConnections(HOVER_NODE);
+      console.log(grid.findLongestRoute(HOVER_NODE.q, HOVER_NODE.r));
     }
   } else {
     if (INTERSECTED_NODE) {

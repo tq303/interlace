@@ -125,20 +125,28 @@ export default class Grid extends Object3D {
 
   findLongestRoute(q, r) {
     const neighbours = this.neighbourOptions();
-    let longest = {
-      routeLength: 0,
-      axial: null,
-      q,
-      r
-    };
-    const lengths = neighbours.map((neighbour) => {
+
+    const longest = neighbours.map((neighbour) => {
       return this.resursiveLookup(q, r, neighbour);
-    }).forEach((length, i) => {
-      if (length >= longest.routeLength) {
-        longest.routeLength = length;
-        longest.axial = neighbours[i];
-      }
-    });
+    }).map((route, i) => {
+
+      // animate
+      route.nodeList.forEach((node) => {
+        setTimeout(() => {
+          this.showHideNode(node, true, 0x0E8200);
+        }, 50 * route.routeLength);
+      });
+
+      return route;
+    }).sort((a, b) => a.routeLength > b.routeLength ? -1 : 1)[0];
+
+    // indicate route
+    /*setTimeout(() => {
+      longest.nodeList.forEach((node) => {
+        this.showHideNode(node, true, 0xB14800);
+      });
+    }, 50 * longest.routeLength + 1);*/
+
     return longest;
   }
 
@@ -160,11 +168,25 @@ export default class Grid extends Object3D {
     const neighbours = this.neighbourOptions();
 
     const lengths = neighbours.map((neighbour) => {
-      return this.resursiveLookup(q, r, neighbour, 0, false);
+      return this.resursiveLookup(q, r, neighbour, null);
+    }).forEach((route, i) => {
+      route.nodeList.forEach((node) => {
+        setTimeout(() => {
+          this.showHideNode(node, false);
+        }, 50 * route.routeLength);
+      });
     });
   }
 
-  resursiveLookup(q, r, neighbour, length = 0, show = true) {
+  resursiveLookup(q, r, neighbour, route = null) {
+    if (route === null) {
+      route = {
+        routeLength: 0,
+        nodeList: [],
+        neighbour,
+      };
+    }
+
     const next = {
       q: (q + neighbour[0]),
       r: (r + neighbour[1]),
@@ -173,12 +195,12 @@ export default class Grid extends Object3D {
     const node = this.findNode(next.q, next.r);
 
     if (node) {
-      setTimeout(() => {
-        this.showHideNode(node, show, 0x0E8200);
-      }, 50 * length);
-      return this.resursiveLookup(next.q, next.r, neighbour, length + 1, show);
+      route.nodeList.push(node);
+      route.routeLength += 1;
+      return this.resursiveLookup(next.q, next.r, neighbour, route);
     }
-    return length;
+
+    return route;
   }
 
   showConnections(node, show = true) {
