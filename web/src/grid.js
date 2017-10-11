@@ -28,7 +28,7 @@ export default class Grid extends Object3D {
   }
 
   ring(q, r, radius) {
-    const result = []
+    const result = [];
     const moveDirections = [[1,0], [0,-1], [-1,0], [-1,1], [0,1], [1,0], [1,-1]];
 
     moveDirections.forEach((moveDirection, moveDirectionIndex) => {
@@ -103,17 +103,61 @@ export default class Grid extends Object3D {
     };
   }
 
+  neighbourOptions() {
+    return [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
+  }
+
   findPotentialNeighbours(q, r) {
     const result = [];
-    const neighbors = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
-    neighbors.forEach((neighbor) => {
-      result.push({ q: q+neighbor[0], r: r+neighbor[1] });
+    const neighbours = this.neighbourOptions();
+    neighbours.forEach((neighbour) => {
+      result.push({
+        q: (q + neighbour[0]),
+        r: (r + neighbour[1])
+      });
     });
     return result;    
   }
 
   findNode(q, r) {
     return this.nodes.find(node => node.q === q && node.r === r);
+  }
+
+  findLongestRoute(q, r) {
+    const neighbours = this.neighbourOptions();
+    const lengths = neighbours.map(neighbour => this.resursiveLookup(q, r, neighbour));
+    console.log(lengths);
+  }
+
+  showHideNode(q, r, show = true, colour = 0x500b82) {
+    const node = this.findNode(q, r);
+
+    if (node && show) {
+      node.node.box.material.color.setHex(colour);
+    } else if (node && !show) {
+      node.node.box.material.color.setHex(0x000000);
+    }
+  }
+
+  hideAllNodes() {
+    this.nodes.forEach(node => {
+      node.node.box.material.color.setHex(0x000000);
+    });
+  }
+
+  resursiveLookup(q, r, neighbour, length = 0) {
+    const next = {
+      q: (q + neighbour[0]),
+      r: (r + neighbour[1]),
+    };
+
+    const node = this.findNode(next.q, next.r);
+
+    if (node) {
+      this.showHideNode(next.q, next.r, true, 0x0E8200);
+      return this.resursiveLookup(next.q, next.r, neighbour, length + 1);
+    }
+    return length;
   }
 
   showConnections(q, r, show = true) {

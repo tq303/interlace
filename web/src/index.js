@@ -59,17 +59,18 @@ function handleMouseEvent(e) {
       }
 
       INTERSECTED_NODE = intersects[ 0 ].object;
-      INTERSECTED_NODE.currentHex = INTERSECTED_NODE.material.color.getHex();
-      INTERSECTED_NODE.material.color.setHex(0x500b82);
-
       HOVER_NODE = grid.nodes.find(n => n.node.box === INTERSECTED_NODE);
 
+      grid.showHideNode(HOVER_NODE.q, HOVER_NODE.r, true);
+
       grid.showConnections(HOVER_NODE.q, HOVER_NODE.r);
+      grid.findLongestRoute(HOVER_NODE.q, HOVER_NODE.r);
     }
   } else {
     if (INTERSECTED_NODE) {
-      INTERSECTED_NODE.material.color.setHex(INTERSECTED_NODE.currentHex);
+      grid.showHideNode(HOVER_NODE.q, HOVER_NODE.r, false);
       grid.showConnections(HOVER_NODE.q, HOVER_NODE.r, false);
+      grid.hideAllNodes();
     }
 
     INTERSECTED_NODE = null;
