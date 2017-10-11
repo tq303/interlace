@@ -61,16 +61,15 @@ function handleMouseEvent(e) {
       INTERSECTED_NODE = intersects[ 0 ].object;
       HOVER_NODE = grid.nodes.find(n => n.node.box === INTERSECTED_NODE);
 
-      grid.showHideNode(HOVER_NODE.q, HOVER_NODE.r, true);
+      grid.showHideNode(HOVER_NODE, true);
 
-      grid.showConnections(HOVER_NODE.q, HOVER_NODE.r);
-      console.log(grid.findLongestRoute(HOVER_NODE.q, HOVER_NODE.r));
+      grid.showConnections(HOVER_NODE);
     }
   } else {
     if (INTERSECTED_NODE) {
-      grid.showHideNode(HOVER_NODE.q, HOVER_NODE.r, false);
-      grid.showConnections(HOVER_NODE.q, HOVER_NODE.r, false);
-      grid.hideAllNodes();
+      grid.showHideNode(HOVER_NODE, false);
+      grid.showConnections(HOVER_NODE, false);
+      grid.hideRecursiveNeighbours(HOVER_NODE.q, HOVER_NODE.r);
     }
 
     INTERSECTED_NODE = null;

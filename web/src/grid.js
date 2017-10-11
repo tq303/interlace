@@ -142,9 +142,7 @@ export default class Grid extends Object3D {
     return longest;
   }
 
-  showHideNode(q, r, show = true, colour = 0x500b82) {
-    const node = this.findNode(q, r);
-
+  showHideNode(node, show = true, colour = 0x500b82) {
     if (node && show) {
       node.node.box.material.color.setHex(colour);
     } else if (node && !show) {
@@ -158,7 +156,15 @@ export default class Grid extends Object3D {
     });
   }
 
-  resursiveLookup(q, r, neighbour, length = 0) {
+  hideRecursiveNeighbours(q, r) {
+    const neighbours = this.neighbourOptions();
+
+    const lengths = neighbours.map((neighbour) => {
+      return this.resursiveLookup(q, r, neighbour, 0, false);
+    });
+  }
+
+  resursiveLookup(q, r, neighbour, length = 0, show = true) {
     const next = {
       q: (q + neighbour[0]),
       r: (r + neighbour[1]),
@@ -167,15 +173,15 @@ export default class Grid extends Object3D {
     const node = this.findNode(next.q, next.r);
 
     if (node) {
-      this.showHideNode(next.q, next.r, true, 0x0E8200);
-      return this.resursiveLookup(next.q, next.r, neighbour, length + 1);
+      setTimeout(() => {
+        this.showHideNode(node, show, 0x0E8200);
+      }, 50 * length);
+      return this.resursiveLookup(next.q, next.r, neighbour, length + 1, show);
     }
     return length;
   }
 
-  showConnections(q, r, show = true) {
-    const node = this.findNode(q, r);
-
+  showConnections(node, show = true) {
     if (node && this.showHover && !this.showWeb) {
       node.connections.forEach((link) => {
         link.line.material = this.showHideLineMaterial(show);
