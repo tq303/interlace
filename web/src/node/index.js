@@ -1,4 +1,3 @@
-import pyramid from './pyramid';
-import puck from './puck';
-
-export { pyramid, puck };
+export { default as pyramid } from './pyramid';
+export { default as puck } from './puck';
+export { default as spinner } from './spinner';

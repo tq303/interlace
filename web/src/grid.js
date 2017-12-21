@@ -7,21 +7,21 @@
 
 import { Object3D, Vector3, Geometry, LineDashedMaterial, Line } from 'three';
 
-import { puck as Node } from 'node';
+import { spinner as Node } from 'node';
 
 export default class Grid extends Object3D {
   constructor(options = {}) {
     super();
 
-    this.tileSize         = (options.tileSize)         ? options.tileSize         : 20;
-    this.tileSpacing      = (options.tileSpacing)      ? options.tileSpacing      : 0;
-    this.pointyTiles      = (options.pointyTiles)      ? options.pointyTiles      : false;
-    this.showWeb          = (options.showWeb)          ? options.showWeb          : false;
-    this.showNeighbours   = (options.showNeighbours)   ? options.showNeighbours   : false;
-    this.animateRecursive = (options.animateRecursive) ? options.animateRecursive : true;
-    this.showLongestRoute = (options.showLongestRoute) ? options.showLongestRoute : true;
+    this.tileSize = options.tileSize ? options.tileSize : 20;
+    this.tileSpacing = options.tileSpacing ? options.tileSpacing : 0;
+    this.pointyTiles = options.pointyTiles ? options.pointyTiles : false;
+    this.showWeb = options.showWeb ? options.showWeb : false;
+    this.showNeighbours = options.showNeighbours ? options.showNeighbours : false;
+    this.animateRecursive = options.animateRecursive ? options.animateRecursive : true;
+    this.showLongestRoute = options.showLongestRoute ? options.showLongestRoute : true;
 
-    this.nodes = this.build(0, 0, 3);
+    this.nodes = this.build(0, 0, 2);
     this.connectNodes();
 
     this.showAllConnection();
@@ -31,7 +31,7 @@ export default class Grid extends Object3D {
 
   ring(q, r, radius) {
     const result = [];
-    const moveDirections = [[1,0], [0,-1], [-1,0], [-1,1], [0,1], [1,0], [1,-1]];
+    const moveDirections = [[1, 0], [0, -1], [-1, 0], [-1, 1], [0, 1], [1, 0], [1, -1]];
 
     moveDirections.forEach((moveDirection, moveDirectionIndex) => {
       for (let i = 0; i <= radius; i++) {
@@ -47,22 +47,22 @@ export default class Grid extends Object3D {
   }
 
   build(q, r, radius, solid = true) {
-    let result = []
+    let result = [];
     if (solid) {
-      result.push(this.createNode(0,0));
+      result.push(this.createNode(0, 0));
     }
     for (let currentRing = 0; currentRing < radius; currentRing++) {
       result.push(...this.ring(q, r, currentRing));
     }
-    return result;  
+    return result;
   }
 
   connectNodes() {
-    this.nodes = this.nodes.map((node) => {
+    this.nodes = this.nodes.map(node => {
       const { q, r } = node;
       const connections = [];
 
-      this.findPotentialNeighbours(q, r).forEach((dest) => {
+      this.findPotentialNeighbours(q, r).forEach(dest => {
         const potential = this.findNode(dest.q, dest.r);
 
         if (potential) {
@@ -76,7 +76,7 @@ export default class Grid extends Object3D {
           connections.push({
             line,
             q: dest.q,
-            r: dest.r
+            r: dest.r,
           });
           this.add(line);
         }
@@ -84,9 +84,8 @@ export default class Grid extends Object3D {
 
       return {
         ...node,
-        connections
+        connections,
       };
-
     });
   }
 
@@ -106,19 +105,19 @@ export default class Grid extends Object3D {
   }
 
   neighbourOptions() {
-    return [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
+    return [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
   }
 
   findPotentialNeighbours(q, r) {
     const result = [];
     const neighbours = this.neighbourOptions();
-    neighbours.forEach((neighbour) => {
+    neighbours.forEach(neighbour => {
       result.push({
-        q: (q + neighbour[0]),
-        r: (r + neighbour[1])
+        q: q + neighbour[0],
+        r: r + neighbour[1],
       });
     });
-    return result;    
+    return result;
   }
 
   findNode(q, r) {
@@ -128,29 +127,31 @@ export default class Grid extends Object3D {
   findLongestRoute(q, r, show = true) {
     const neighbours = this.neighbourOptions();
 
-    const longest = neighbours.map((neighbour) => {
-      return this.resursiveLookup(q, r, neighbour);
-    }).map((route, i) => {
+    const longest = neighbours
+      .map(neighbour => {
+        return this.resursiveLookup(q, r, neighbour);
+      })
+      .map((route, i) => {
+        // animate
+        if (this.animateRecursive) {
+          route.nodeList.forEach(node => {
+            setTimeout(() => {
+              this.showHideNode(node, show, 0x0e8200);
+            }, 50 * route.routeLength);
+          });
+        }
 
-      // animate
-      if (this.animateRecursive) {
-        route.nodeList.forEach((node) => {
-          setTimeout(() => {
-            this.showHideNode(node, show, 0x0E8200);
-          }, 50 * route.routeLength);
-        });        
-      }
-
-      return route;
-    }).sort((a, b) => a.routeLength > b.routeLength ? -1 : 1)[0];
+        return route;
+      })
+      .sort((a, b) => (a.routeLength > b.routeLength ? -1 : 1))[0];
 
     // indicate route
     if (this.showLongestRoute) {
       setTimeout(() => {
-        longest.nodeList.forEach((node) => {
-          this.showHideNode(node, show, 0xB14800);
+        longest.nodeList.forEach(node => {
+          this.showHideNode(node, show, 0xb14800);
         });
-      }, 50 * longest.routeLength + 1);      
+      }, 50 * longest.routeLength + 1);
     }
 
     return longest;
@@ -184,8 +185,8 @@ export default class Grid extends Object3D {
     }
 
     const next = {
-      q: (q + neighbour[0]),
-      r: (r + neighbour[1]),
+      q: q + neighbour[0],
+      r: r + neighbour[1],
     };
 
     const node = this.findNode(next.q, next.r);
@@ -194,14 +195,15 @@ export default class Grid extends Object3D {
       route.nodeList.push(node);
       route.routeLength += 1;
       return this.resursiveLookup(next.q, next.r, neighbour, route);
-    }this
+    }
+    this;
 
     return route;
   }
 
   showConnections(node, show = true) {
     if (node && this.showNeighbours && !this.showWeb) {
-      node.connections.forEach((link) => {
+      node.connections.forEach(link => {
         link.line.material = this.showHideLineMaterial(show);
       });
     }
@@ -209,7 +211,7 @@ export default class Grid extends Object3D {
 
   showAllConnection() {
     this.nodes.forEach(({ q, r, node, connections }) => {
-      connections.forEach((link) => {
+      connections.forEach(link => {
         link.line.material = this.showHideLineMaterial(this.showWeb);
       });
     });
@@ -221,11 +223,11 @@ export default class Grid extends Object3D {
       node.position.x = center.x;
       node.position.z = center.y;
 
-      connections.forEach((link) => {
+      connections.forEach(link => {
         const { geometry } = link.line;
         const d_center = this.getCenterXY(link.q, link.r);
-        geometry.vertices[0] = (new Vector3(center.x, 0, center.y));
-        geometry.vertices[1] = (new Vector3(d_center.x, 0, d_center.y));
+        geometry.vertices[0] = new Vector3(center.x, 0, center.y);
+        geometry.vertices[1] = new Vector3(d_center.x, 0, d_center.y);
         geometry.computeLineDistances();
         link.line.material = this.showHideLineMaterial(this.showWeb);
         geometry.verticesNeedUpdate = true;
@@ -234,45 +236,45 @@ export default class Grid extends Object3D {
   }
 
   showHideLineMaterial(show = true) {
-    return (show) ? Grid.LineMaterialShow : Grid.LineMaterialHide;
+    return show ? Grid.LineMaterialShow : Grid.LineMaterialHide;
   }
 
   getCenterXY(q, r) {
-    let x,y;
+    let x, y;
     if (this.pointyTiles) {
-      x = (this.tileSize + this.tileSpacing) * Math.sqrt(3) * (q + r / 2)
-      y = -((this.tileSize + this.tileSpacing) * 3/2 * r)      
+      x = (this.tileSize + this.tileSpacing) * Math.sqrt(3) * (q + r / 2);
+      y = -((this.tileSize + this.tileSpacing) * 3 / 2 * r);
     } else {
-      x = (this.tileSize + this.tileSpacing) * 3/2 * q
-      y = -((this.tileSize + this.tileSpacing) * Math.sqrt(3) * (r + q / 2))      
+      x = (this.tileSize + this.tileSpacing) * 3 / 2 * q;
+      y = -((this.tileSize + this.tileSpacing) * Math.sqrt(3) * (r + q / 2));
     }
-    return { x: x, y: y }    
+    return { x: x, y: y };
   }
 
   axialDistance(q1, r1, q2, r2) {
-    return (Math.abs(q1-q2) + Math.abs(r1-r2) + Math.abs(q1+r1-q2-r2)) / 2;
+    return (Math.abs(q1 - q2) + Math.abs(r1 - r2) + Math.abs(q1 + r1 - q2 - r2)) / 2;
   }
 
   pixelToAxial(x, y) {
     const decimalQR = this.pixelToDecimalQR(x, y);
     const cube = this.axialToCube(decimalQR);
     const roundedCube = this.roundCube(cube);
-    this.cubeToAxial(roundedCube);    
+    this.cubeToAxial(roundedCube);
   }
 
   pixelToDecimalQR(x, y, scale = 1) {
     let q, r;
 
     if (this.pointyTiles) {
-      q = (1/3 * Math.sqrt(3) * x - 1/3 * -y) / (this.tileSize + this.tileSpacing);
-      r = 2/3 * -y / (this.tileSize + this.tileSpacing);
+      q = (1 / 3 * Math.sqrt(3) * x - 1 / 3 * -y) / (this.tileSize + this.tileSpacing);
+      r = 2 / 3 * -y / (this.tileSize + this.tileSpacing);
     } else {
-      q = 2/3 * x / (this.tileSize + this.tileSpacing);
-      r = (1/3 * Math.sqrt(3) * -y - 1/3 * x) / (this.tileSize + this.tileSpacing);
+      q = 2 / 3 * x / (this.tileSize + this.tileSpacing);
+      r = (1 / 3 * Math.sqrt(3) * -y - 1 / 3 * x) / (this.tileSize + this.tileSpacing);
     }
 
-    q /= scale
-    r /= scale
+    q /= scale;
+    r /= scale;
 
     return { q, r };
   }
@@ -287,14 +289,14 @@ export default class Grid extends Object3D {
     const dz = Math.abs(rz - coordinates.z);
 
     if (dx > dy && dx > dz) {
-      rx = -ry-rz;
+      rx = -ry - rz;
     } else if (dy > dz) {
-      ry = -rx-rz;
+      ry = -rx - rz;
     } else {
-      rz = -rx-ry;
+      rz = -rx - ry;
     }
 
-    return { x: rx, y: ry, z: rz };    
+    return { x: rx, y: ry, z: rz };
   }
 
   cubeToAxial(cube) {
@@ -302,12 +304,12 @@ export default class Grid extends Object3D {
   }
 
   axialToCube(axial) {
-    return { x: axial.q, y: axial.r, z: -axial.q-axial.r };
+    return { x: axial.q, y: axial.r, z: -axial.q - axial.r };
   }
 }
 
 Grid.LineMaterialShow = new LineDashedMaterial({
-  color: 0x0DE5FF,
+  color: 0x0de5ff,
   dashSize: 2.5,
   gapSize: 5,
 });
