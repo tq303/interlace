@@ -2,11 +2,12 @@ const path = require('path');
 
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 const FlowBabelWebpackPlugin = require('flow-babel-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, 'public'),
+    path: path.resolve(__dirname, 'dist'),
     filename: `index.js`
   },
   resolve: {
@@ -44,9 +45,27 @@ module.exports = {
       }
     ]
   },
+  devServer: {
+    host: '0.0.0.0',
+    port: 8088,
+    contentBase: './public',
+    historyApiFallback: true,
+    overlay: {
+      errors: true,
+    },
+    watchOptions: {
+      aggregateTimeout: 300,
+      poll: 1000,
+    },
+  },
   plugins: [
     new FlowBabelWebpackPlugin(),
     process.env.NODE_ENV === 'production' ? new UglifyJSPlugin() : () => {},
+    new HtmlWebpackPlugin({
+      title: 'Interlace',
+      hash: true,
+      template: './src/index.html'
+    }),
   ],
   externals: {
     Stats: 'Stats'

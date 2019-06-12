@@ -1,14 +1,10 @@
 # Interlace
 
-This project is the merging of mesh networks, blockchain and an interactive light display.
+This project is the merging of mesh networks, distributde storage and an interactive light display.
 
 ## Prerequisites
 
 ```sh
-sudo apt-get install lua5.1 luarocks libev-dev
-
-luarocks busted
-
 npm install -g flow-bin webpack
 ```
 
@@ -39,7 +35,7 @@ Currently for the web application there needs to be the following.
 
 ## Node
 
-This is a combination of Lua and C code which powers a nodeMCU board. 
+This is C code which powers a nodeMCU board. 
 
 ## Build
 
@@ -67,8 +63,16 @@ A situation whereby the recieving node rejects the request.
 ### Node excitement level
 Each node has an excitement level, which once it hits the threshold can gain a particular state. The animations indicate the level of excitement.
 
+### Node Animation selection
+
+Each node will be responsible for it's own animations and will have the neccessary code to generate them. However when interacting with each node
 ## Maths
 
 ### Circumference
 C = 2PI * r
 const radius = C / (2 * Math.PI);
+
+## CNC Machine
+Control software: GRBL
+Spindle: 555 12v 15000rpm
+controller software: https://github.com/Denvi/Candle

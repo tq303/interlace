@@ -1,7 +1,0 @@
-node_modules
-*.log
-./index.js
-./index.js.map
-.pioenvs
-.piolibdeps
-.vscode/c_cpp_properties.json
